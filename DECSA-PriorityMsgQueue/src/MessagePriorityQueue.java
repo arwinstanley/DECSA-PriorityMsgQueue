@@ -13,6 +13,8 @@ public class MessagePriorityQueue {
 	private int time;
 	//chance of a random int between 0-9 is 20%
 	private final int twentyPercent =5;
+	//data table
+	private ArrayList<ArrayList<Integer>> data;
 	/**
 	 * @param none
 	 * @return none
@@ -23,6 +25,10 @@ public class MessagePriorityQueue {
 	 */
 	public MessagePriorityQueue() {
 			time =0;
+			data = new ArrayList<ArrayList<Integer>>(5);
+			for(int i = 0; i < 5;i++) {
+				data.add(new ArrayList<Integer>());
+			}
 			msgs = new ArrayList<Queue<Message>>(5);
 			for(int i = 0; i < 5;i++) {
 				msgs.add(new LinkedList<Message>());
@@ -64,7 +70,9 @@ public class MessagePriorityQueue {
 		for(int i = 0; i< 4; i++) {
 			itterateTime();
 		}
-		System.out.println(in + "th message removed at " + time + " it was recieved at " + msgs.get(in).peek().getArrivalTime());
+		System.out.println(in + "th message removed at " + time + " it was received at " + msgs.get(in).peek().getArrivalTime());
+		System.out.println("It took "+ (time-(msgs.get(in).peek().getArrivalTime()))+ " minutes to process, at a priority level "+in);
+		data.get(in).add((time-(msgs.get(in).peek().getArrivalTime())));
 		msgs.get(in).remove();
 	}
 	/**
@@ -78,19 +86,21 @@ public class MessagePriorityQueue {
 		while(!msgs.get(0).isEmpty()) {
 			processMessage(0);
 		}
-		while(!msgs.get(1).isEmpty()) {
+		while(!msgs.get(1).isEmpty()&&msgs.get(0).isEmpty()) {
+			
 			processMessage(1);
 		}
-		while(!msgs.get(2).isEmpty()) {
+		while(!msgs.get(2).isEmpty()&&msgs.get(1).isEmpty()&&msgs.get(0).isEmpty()) {
 			processMessage(2);
 		}
-		while(!msgs.get(3).isEmpty()) {
+		while(!msgs.get(3).isEmpty()&&msgs.get(2).isEmpty()&&msgs.get(1).isEmpty()&&msgs.get(0).isEmpty()) {
 			processMessage(3);
 		}
-		while(!msgs.get(4).isEmpty()) {
+		while(!msgs.get(4).isEmpty()&&msgs.get(3).isEmpty()&&msgs.get(2).isEmpty()&&msgs.get(0).isEmpty()&&msgs.get(3).isEmpty()) {
 			processMessage(4);
 		}
-	}	/**
+	}	
+	/**
 	 * @param int i
 	 * @return msgs Queue of Messages
 	 * 
@@ -99,6 +109,40 @@ public class MessagePriorityQueue {
 	 */		
 	public Queue<Message> getMsgs(int i){
 		return msgs.get(i);
+	}
+	/**
+	 * @param none
+	 * @return none
+	 * 
+	 * print data prints out the data table in a readable format
+	 * 
+	 */	
+	public void printdata() {
+		for(int i = 0; i< data.size();i++) {
+			for(int j = 0; j< data.get(i).size();j++) {
+				System.out.print("|"+data.get(i).get(j)+"|");
+			}
+			System.out.println();
+		}
+	}
+	/**
+	 * @param none
+	 * @return none
+	 * 
+	 * prints out the averages from all of the data tables
+	 * 
+	 */
+	public void printdataAvg() {
+		
+		for(int i = 0; i< data.size();i++) {
+			double count = 0;
+			for(int j = 0; j< data.get(i).size();j++) {
+				count += data.get(i).get(j);
+			}
+			count = count/(data.get(i).size());
+			System.out.println("The average processing time of a message in the "+ i+"th queue is, "+count);
+		}
+		System.out.println();
 	}
 }
 
